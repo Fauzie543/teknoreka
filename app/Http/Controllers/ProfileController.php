@@ -31,6 +31,12 @@ class ProfileController extends Controller
         ]);
 
         // Jika ada foto baru, hapus foto lama dan simpan yang baru
+        if ($request->has('username')) {
+            $user->username = $request->username;
+        }
+        if ($request->has('email')) {
+            $user->email = $request->email;
+        }
         if ($request->hasFile('photo_profile')) {
             if ($user->photo_profile) {
                 Storage::delete('public/profile_photos/' . $user->photo_profile);
@@ -38,13 +44,22 @@ class ProfileController extends Controller
             $photoPath = $request->file('photo_profile')->store('public/profile_photos');
             $user->photo_profile = basename($photoPath);
         }
-
-        // Update username dan email
-        $user->update($request->only('username', 'email', 'photo_profile'));
+        
+        $user->save();
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => $user->role,
+                'photo_profile' => $user->photo_profile 
+                    ? asset('storage/profile_photos/' . $user->photo_profile) 
+                    : null,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ]
         ], 200);
     }
 }

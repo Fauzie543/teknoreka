@@ -32,4 +32,72 @@ class AdminController extends Controller
             'admin' => $admin
         ], 201);
     }
+
+    // Lihat semua user
+public function index()
+{
+    $users = User::where('role', 'user', 'admin')->select('id', 'username', 'email', 'created_at')->get();
+
+    return response()->json([
+        'users' => $users
+    ]);
+}
+
+// Lihat detail user berdasarkan ID
+public function show($id)
+{
+    $user = User::where('role', 'user')->findOrFail($id);
+
+    return response()->json([
+        'user' => [
+            'id' => $user->id,
+            'username' => $user->username,
+            'email' => $user->email,
+            'created_at' => $user->created_at,
+        ]
+    ]);
+}
+
+// Update password user
+public function updateUser(Request $request, $id)
+{
+    $user = User::where('role', 'user')->findOrFail($id);
+
+    // Validasi dinamis
+    $rules = [];
+
+    if ($request->has('password')) {
+        $rules['password'] = ['required', 'confirmed', Rules\Password::defaults()];
+    }
+
+    if ($request->has('role')) {
+        $rules['role'] = ['required', 'in:admin,user'];
+    }
+
+    $request->validate($rules);
+
+    // Update password jika ada
+    if ($request->has('password')) {
+        $user->password = Hash::make($request->password);
+    }
+
+    // Update role jika ada
+    if ($request->has('role')) {
+        $user->role = $request->role;
+    }
+
+    $user->save();
+
+    return response()->json([
+        'message' => 'Data user berhasil diperbarui',
+        'user' => [
+            'id' => $user->id,
+            'username' => $user->username,
+            'role' => $user->role,
+        ]
+    ]);
+}
+
+
+
 }

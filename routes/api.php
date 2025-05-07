@@ -23,15 +23,15 @@ use App\Http\Controllers\User\DashboardController as UserDashboard;
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/signin', [AuthController::class, 'signin'])->name('signin');
-Route::post('/forgot-password', function (Request $request) {
-    $request->validate(['email' => 'required|email']);
+// Route::post('/forgot-password', function (Request $request) {
+//     $request->validate(['email' => 'required|email']);
 
-    $status = Password::sendResetLink($request->only('email'));
+//     $status = Password::sendResetLink($request->only('email'));
 
-    return $status === Password::RESET_LINK_SENT
-        ? response()->json(['message' => 'Reset link sent'])
-        : response()->json(['message' => 'Failed to send reset link'], 400);
-})->name('password.reset');
+//     return $status === Password::RESET_LINK_SENT
+//         ? response()->json(['message' => 'Reset link sent'])
+//         : response()->json(['message' => 'Failed to send reset link'], 400);
+// })->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 
@@ -49,6 +49,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::post('/assets', [App\Http\Controllers\Admin\InventoryController::class, 'store']); // Tambah Aset
     Route::put('/assets/{id}', [App\Http\Controllers\Admin\InventoryController::class, 'update']); // Edit Aset
     Route::delete('/assets/{id}', [App\Http\Controllers\Admin\InventoryController::class, 'destroy']);
+    Route::get('/users', [App\Http\Controllers\Admin\AdminController::class, 'index']); // Lihat semua user
+    Route::get('/users/{id}', [App\Http\Controllers\Admin\AdminController::class, 'show']); // Lihat detail user
+    Route::put('/users/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateUser']); // Gabung ubah password & role
+
+    
+
     
 
 
