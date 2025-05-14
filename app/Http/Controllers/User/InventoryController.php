@@ -3,35 +3,45 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Http\Request;
 use App\Models\Inventory;
+use Illuminate\Support\Facades\Auth;
 use App\Models\InventoryLoan;
 
 
 
 class InventoryController extends Controller
 {
-    public function availableAssets()
+    public function index(Request $request)
     {
-        $assets = Inventory::with('loans')
-            ->where('is_can_loan', true)
-            ->get()
-            ->map(function ($asset) {
-                return [
-                    'id' => $asset->id,
-                    'name' => $asset->name,
-                    'category' => $asset->category,
-                    'placement' => $asset->placement,
-                    'quantity' => $asset->available_quantity, // Jumlah yang masih bisa dipinjam
-                    'img_url' => $asset->img_url,
-                ];
-            });
+        $filter = $request->query('filter');
+
+        $query = Inventory::query();
+        
+        if ($filter === 'owned') {
+            $query->where('inv_status', 'owned');
+        } elseif ($filter === 'loan') {
+            $query->where('inv_status', 'loan');
+        }
+        return response()->json([
+            'message' => 'Inventories fetched successfully',
+            'data' => $query->get()
+        ]);
+    }
+
+    public function show($id)
+    {
+        $inventory = Inventory::find($id);
+
+        if (!$inventory) {
+            return response()->json(['message' => 'Inventory not found'], 404);
+        }
 
         return response()->json([
-            'message' => 'Daftar aset tersedia berhasil diambil',
-            'data' => $assets
-        ], 200);
+            'message' => 'Inventory details fetched successfully',
+            'data' => $inventory
+        ]);
     }
 
     // 🔹 2. Lihat status peminjaman user

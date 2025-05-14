@@ -69,6 +69,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 Route::middleware(['auth:sanctum', 'role:user'])->prefix('user')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\User\DashboardController::class, 'index']);
     Route::get('/assets', [App\Http\Controllers\User\InventoryController::class, 'index']);
+    Route::get('/assets/{id}', [App\Http\Controllers\User\InventoryController::class, 'show']);
     // Manajemen Aset
     // Route::get('/assets', [App\Http\Controllers\User\InventoryController::class, 'index']);
     // Route::get('/assets/{id}', [App\Http\Controllers\User\InventoryController::class, 'show']);
@@ -77,8 +78,9 @@ Route::middleware(['auth:sanctum', 'role:user'])->prefix('user')->group(function
     // Route::get('/loans', [App\Http\Controllers\User\LoanController::class, 'index']);
     // Route::get('/loans/{id}', [App\Http\Controllers\User\LoanController::class, 'show']);
 
-    Route::get('/assets', [App\Http\Controllers\User\InventoryController::class, 'availableAssets']);
-    Route::get('/loans', [App\Http\Controllers\User\InventoryController::class, 'loanStatus']);
+    // Route::get('/assets', [App\Http\Controllers\User\InventoryController::class, 'availableAssets']);
+    Route::get('/loansstatus', [App\Http\Controllers\User\InventoryController::class, 'loanStatus']);
+    Route::get('/loans', [App\Http\Controllers\User\LoanController::class, 'index']);
     Route::get('/user/loans/filter', [App\Http\Controllers\User\InventoryController::class, 'filterLoans']);
 
 });
