@@ -43,17 +43,19 @@ class AdminController extends Controller
                 $query->where('username', 'like', '%' . $request->search . '%');
             }
 
-            $users = $query->get()->map(function ($user) {
+            $users = User::all()->map(function ($user) {
                 return [
                     'id' => $user->id,
                     'username' => $user->username,
                     'email' => $user->email,
                     'role' => $user->role,
-                    'photo_profile' => $user->photo_profile ?? null,
+                    'photo_profile' => $user->photo_profile 
+                        ? asset('storage/profile_photos/' . $user->photo_profile)
+                        : null,
                     'created_at' => $user->created_at,
                 ];
             });
-
+        
             return response()->json([
                 'message' => 'Daftar user berhasil diambil',
                 'data' => $users
