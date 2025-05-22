@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Inventory;
@@ -44,50 +45,69 @@ class InventoryController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'placement' => 'required|string|max:255',
-            'asset_entry' => 'nullable|date',
-            'expired_date' => 'nullable|date',
-            'is_can_loan' => 'required|boolean',
-            'inv_status' => 'required|in:owned,loan',
-            'quantity' => 'required|integer|min:1',
-            'img_url' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'category' => 'required|string|max:255',
+        'placement' => 'required|string|max:255',
+        'asset_entry' => 'nullable|date',
+        'expired_date' => 'nullable|date',
+        'is_can_loan' => 'required|in:true,false',
+        'inv_status' => 'required|in:owned,loan',
+        'quantity' => 'required|integer|min:1',
+        'img_url' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        $inventory = Inventory::create($request->all());
+    $data = $request->except('img_url');
 
-        return response()->json([
-            'message' => 'Inventory added successfully',
-            'data' => $inventory
-        ], 201);
+    $data['is_can_loan'] = $request->input('is_can_loan') === 'true';
+
+    if ($request->hasFile('img_url')) {
+        $imagePath = $request->file('img_url')->store('assets', 'public');
+        $data['img_url'] = asset('storage/' . $imagePath);
     }
+    
+    $inventory = Inventory::create($data);
+
+    return response()->json([
+        'message' => 'Inventory added successfully',
+        'data' => $inventory
+    ], 201);
+}
+
 
     public function update(Request $request, $id)
-    {
-        $inventory = Inventory::findOrFail($id);
+{
+    $inventory = Inventory::findOrFail($id);
 
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'category' => 'sometimes|string|max:255',
-            'placement' => 'sometimes|string|max:255',
-            'asset_entry' => 'nullable|date',
-            'expired_date' => 'nullable|date',
-            'is_can_loan' => 'sometimes|boolean',
-            'inv_status' => 'sometimes|in:owned,loan',
-            'quantity' => 'sometimes|integer|min:1',
-            'img_url' => 'nullable|string',
-        ]);
+    $request->validate([
+        'name' => 'sometimes|string|max:255',
+        'category' => 'sometimes|string|max:255',
+        'placement' => 'sometimes|string|max:255',
+        'asset_entry' => 'nullable|date',
+        'expired_date' => 'nullable|date',
+        'is_can_loan' => 'required|in:true,false',
+        'inv_status' => 'sometimes|in:owned,loan',
+        'quantity' => 'sometimes|integer|min:1',
+        'img_url' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        $inventory->update($request->all());
+    $data = $request->except('img_url');
+    $data['is_can_loan'] = $request->input('is_can_loan') === 'true';
 
-        return response()->json([
-            'message' => 'Inventory updated successfully',
-            'data' => $inventory
-        ]);
+    if ($request->hasFile('img_url')) {
+        $imagePath = $request->file('img_url')->store('assets', 'public');
+        $data['img_url'] = '/storage/' . $imagePath;
     }
+
+    $inventory->update($data);
+
+    return response()->json([
+        'message' => 'Inventory updated successfully',
+        'data' => $inventory
+    ]);
+}
+
 
     public function destroy($id)
     {

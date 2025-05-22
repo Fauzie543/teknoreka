@@ -44,21 +44,13 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/register', [App\Http\Controllers\Admin\AdminController::class, 'store']);
     Route::get('/dashboard', [AdminDashboard::class, 'index']);
-    Route::get('/assets', [App\Http\Controllers\Admin\InventoryController::class, 'index']);
     Route::get('/assets/{id}', [App\Http\Controllers\Admin\InventoryController::class, 'show']);
     Route::post('/assets', [App\Http\Controllers\Admin\InventoryController::class, 'store']); // Tambah Aset
     Route::put('/assets/{id}', [App\Http\Controllers\Admin\InventoryController::class, 'update']); // Edit Aset
     Route::delete('/assets/{id}', [App\Http\Controllers\Admin\InventoryController::class, 'destroy']);
     Route::get('/users', [App\Http\Controllers\Admin\AdminController::class, 'index']); // Lihat semua user
     Route::get('/users/{id}', [App\Http\Controllers\Admin\AdminController::class, 'show']); // Lihat detail user
-    Route::put('/users/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateUser']); // Gabung ubah password & role
-
-    
-
-    
-
-
-
+    Route::put('/users/{id}', [App\Http\Controllers\Admin\AdminController::class, 'updateUser']); // Gabung ubah pass
     Route::get('/loans', [App\Http\Controllers\Admin\LoanController::class, 'index']); // Lihat semua peminjaman
     Route::get('/loans/{id}', [App\Http\Controllers\Admin\LoanController::class, 'show']); // Lihat detail peminjaman
     Route::post('/loans', [App\Http\Controllers\Admin\LoanController::class, 'store']); // Tambah peminjaman
@@ -74,12 +66,10 @@ Route::middleware(['auth:sanctum', 'role:user'])->prefix('user')->group(function
     // Route::get('/assets', [App\Http\Controllers\User\InventoryController::class, 'index']);
     // Route::get('/assets/{id}', [App\Http\Controllers\User\InventoryController::class, 'show']);
 
-    // // Manajemen Peminjaman Aset
-    // Route::get('/loans', [App\Http\Controllers\User\LoanController::class, 'index']);
-    // Route::get('/loans/{id}', [App\Http\Controllers\User\LoanController::class, 'show']);
+    
 
     // Route::get('/assets', [App\Http\Controllers\User\InventoryController::class, 'availableAssets']);
-    Route::get('/loansstatus', [App\Http\Controllers\User\InventoryController::class, 'loanStatus']);
+    Route::get('/loans/{id}', [App\Http\Controllers\User\LoanController::class, 'show']);
     Route::get('/loans', [App\Http\Controllers\User\LoanController::class, 'index']);
     Route::get('/user/loans/filter', [App\Http\Controllers\User\InventoryController::class, 'filterLoans']);
 

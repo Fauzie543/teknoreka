@@ -32,4 +32,5 @@ class LoanController extends Controller
             'data' => $loan
         ], 200);
     }
+    
 }

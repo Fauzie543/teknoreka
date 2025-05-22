@@ -34,14 +34,40 @@ class AdminController extends Controller
     }
 
     // Lihat semua user
-public function index()
-{
-    $users = User::where('role', 'user', 'admin')->select('id', 'username', 'email', 'created_at')->get();
+    public function index(Request $request)
+    {
+        try {
+            $query = User::where('role', 'user');
 
-    return response()->json([
-        'users' => $users
-    ]);
-}
+            if ($request->filled('search')) {
+                $query->where('username', 'like', '%' . $request->search . '%');
+            }
+
+            $users = $query->get()->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'photo_profile' => $user->photo_profile ?? null,
+                    'created_at' => $user->created_at,
+                ];
+            });
+
+            return response()->json([
+                'message' => 'Daftar user berhasil diambil',
+                'data' => $users
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Gagal ambil user',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
 
 // Lihat detail user berdasarkan ID
 public function show($id)

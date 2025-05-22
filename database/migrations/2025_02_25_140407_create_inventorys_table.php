@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('is_can_loan');
             $table->enum('inv_status', ['owned', 'loan']);
             $table->integer('quantity');
+            $table->integer('available_quantity');
             $table->string('img_url')->nullable();
             $table->timestamps();
         });

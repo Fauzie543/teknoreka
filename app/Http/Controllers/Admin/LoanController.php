@@ -36,7 +36,7 @@ class LoanController extends Controller
     public function store(Request $request)
 {
     $request->validate([
-        'inventory_id' => 'required|exists:inventorys,id',
+        'inventory_id' => 'required|exists:inventories,id',
         'user_id' => 'required|exists:users,id',
         'start_at' => 'required|date',
         'expired_at' => 'required|date|after:start_at',
