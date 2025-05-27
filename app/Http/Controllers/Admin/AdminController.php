@@ -81,6 +81,10 @@ public function show($id)
             'id' => $user->id,
             'username' => $user->username,
             'email' => $user->email,
+            'role' => $user->role,
+            'photo_profile' => $user->photo_profile 
+                        ? asset('storage/profile_photos/' . $user->photo_profile)
+                        : null,
             'created_at' => $user->created_at,
         ]
     ]);

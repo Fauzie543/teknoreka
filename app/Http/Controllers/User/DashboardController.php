@@ -15,7 +15,8 @@ class DashboardController extends Controller
         $totalAset = Inventory::count();
         $totalTersedia = Inventory::where('is_can_loan', 'false')->count();
         $totalDipinjam = InventoryLoan::count();
-        $totalPeminjaman = Inventory::where('inv_status', 'owned')->count();
+        $totalPerusahaan = Inventory::where('inv_status', 'owned')->count();
+        $totalPinjaman = Inventory::where('inv_status', 'loan')->count();
         
 
         // Data untuk diagram
@@ -23,7 +24,8 @@ class DashboardController extends Controller
             'total_aset' => $totalAset,
             'aset_tersedia' => $totalTersedia,
             'aset_dipinjam' => $totalDipinjam,
-            'total_peminjaman' => $totalPeminjaman
+            'aset_perusahaan' => $totalPerusahaan,
+            'aset_pinjaman' => $totalPinjaman
         ];
 
         return response()->json([
