@@ -17,31 +17,50 @@ class InventoryController extends Controller
     {
         $filter = $request->query('filter');
 
-        $query = Inventory::query();
-        
-        if ($filter === 'owned') {
-            $query->where('inv_status', 'owned');
-        } elseif ($filter === 'loan') {
-            $query->where('inv_status', 'loan');
-        }
-        return response()->json([
-            'message' => 'Inventories fetched successfully',
-            'data' => $query->get()
-        ]);
+    $query = Inventory::query();
+
+    if ($filter === 'owned') {
+        $query->where('inv_status', 'owned');
+    } elseif ($filter === 'loan') {
+        $query->where('inv_status', 'loan');
+    }
+
+    $inventories = $query->get();
+
+    $data = $inventories->map(function ($item) {
+        $loaned = InventoryLoan::where('inventory_id', $item->id)
+            ->whereNull('expired_at')
+            ->sum('quantity');
+
+        $item->available_quantity = $item->quantity - $loaned;
+
+        return $item;
+    });
+
+    return response()->json([
+        'message' => 'Inventories fetched successfully',
+        'data' => $data
+    ]);
     }
 
     public function show($id)
     {
         $inventory = Inventory::find($id);
 
-        if (!$inventory) {
-            return response()->json(['message' => 'Inventory not found'], 404);
-        }
+    if (!$inventory) {
+        return response()->json(['message' => 'Inventory not found'], 404);
+    }
 
-        return response()->json([
-            'message' => 'Inventory details fetched successfully',
-            'data' => $inventory
-        ]);
+    $loaned = InventoryLoan::where('inventory_id', $inventory->id)
+        ->whereNull('expired_at')
+        ->sum('quantity');
+
+    $inventory->available_quantity = $inventory->quantity - $loaned;
+
+    return response()->json([
+        'message' => 'Inventory details fetched successfully',
+        'data' => $inventory
+    ]);
     }
 
     public function store(Request $request)

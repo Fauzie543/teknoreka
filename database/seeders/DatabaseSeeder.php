@@ -20,12 +20,16 @@ class DatabaseSeeder extends Seeder
                 'username' => 'Admin',
                 'email' => 'admin@gmail.com',
                 'role' => 'admin',
+                'password' => Hash::make('123456'),
+            ],
+            [
+                'username' => 'User Biasa',
+                'email' => 'user@gmail.com',
+                'role' => 'user',
+                'password' => Hash::make('123456'),
             ],
         ];
 
-        foreach ($users as $user) {
-            $user['password'] = Hash::make('123456');
-            DB::table('users')->insert($user);
+        DB::table('users')->insert($users);
     }
-}
 }

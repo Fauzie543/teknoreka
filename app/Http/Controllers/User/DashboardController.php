@@ -13,7 +13,7 @@ class DashboardController extends Controller
     {
         // Ambil data aset dari database
         $totalAset = Inventory::count();
-        $totalTersedia = Inventory::where('is_can_loan', 'false')->count();
+        $totalTersedia = Inventory::where('is_can_loan', 1)->count();
         $totalDipinjam = InventoryLoan::count();
         $totalPerusahaan = Inventory::where('inv_status', 'owned')->count();
         $totalPinjaman = Inventory::where('inv_status', 'loan')->count();

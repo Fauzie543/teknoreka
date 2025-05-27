@@ -20,7 +20,6 @@ class Inventory extends Model
         'is_can_loan',
         'inv_status',
         'quantity', 
-        'available_quantity',
         'img_url',
     ];
 
