@@ -14,8 +14,20 @@ class ProfileController extends Controller
       // Lihat Profil Pengguna
     public function show()
     {
+        $user = Auth::user();
+
         return response()->json([
-            'user' => Auth::user()
+            'user' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => $user->role,
+                'photo_profile' => $user->photo_profile 
+                    ? asset('storage/profile_photos/' . $user->photo_profile)
+                    : null,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ]
         ], 200);
     }
 
