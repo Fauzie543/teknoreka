@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/register', [App\Http\Controllers\Admin\AdminController::class, 'store']);
     Route::get('/dashboard', [AdminDashboard::class, 'index']);
+    Route::get('/assets', [App\Http\Controllers\Admin\InventoryController::class, 'index']);
     Route::get('/assets/{id}', [App\Http\Controllers\Admin\InventoryController::class, 'show']);
     Route::post('/assets', [App\Http\Controllers\Admin\InventoryController::class, 'store']); // Tambah Aset
     Route::put('/assets/{id}', [App\Http\Controllers\Admin\InventoryController::class, 'update']); // Edit Aset
